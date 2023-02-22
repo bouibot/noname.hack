@@ -883,7 +883,7 @@ function library:Window(info)
                 local colorpicker = {value = def, name = name, trans = trans, callback = callback, pointer = pointer, flag = flag, dvalues = {}, instances = {}}
 
                 if pointer then
-                    library.flags[pointer] = colorpicker
+                    library.pointers[pointer] = colorpicker
                 end
 
                 table.insert(cptable, colorpicker)
@@ -923,16 +923,16 @@ function library:Window(info)
                 end 
 
                 function colorpicker.Get(self)
-                    return self.trans ~= nil and {self.value, self.trans} or self.value
+                    return not self.trans and {self.value:ToHSV()} or {self.value[1]:ToHSV(), self.value[2]}
                 end
 
                 function colorpicker.Update(self)
-                    cpframe.Color = self.trans ~= nil and self.value[1] or self.value
+                    cpframe.Color = self.trans and self.value[1] or self.value
                 end
 
                 function colorpicker.Set(self, value)
 
-                    self.value = value
+                    self.value = not self.trans and c3hsv(unpack(value)) or {c3hsv(value[1][1], value[1][2], value[1][3]), value[2]}
 
                     if colorpicker.flag ~= nil then
                         library.flags[flag] = self.value
@@ -960,14 +960,6 @@ function library:Window(info)
                     window:HideUselessDumbassFuckingShitStopPastingMyCodePleaseYouAreSkidAndImGayILikeBigBlackManOkNoProblemThisIsASexcretFuncteiotieitns4epoivi2n45obvi6j45bv74gvho4hgv487()
 
                     local hsv = (self.trans and {self.value[1]:ToHSV()}) or {self.value:ToHSV()}
-
-                    if h == 0 then
-                        h = 1
-                    end
-
-                    if v == 0 then
-                        v = 1
-                    end
 
                     self.dvalues = {hsv[1], hsv[2], hsv[3], self.trans and self.value[2] or 0, false, false, false}
 
@@ -1098,7 +1090,7 @@ function library:Window(info)
                     return section:_Colorpicker(info, {v2new(-35, 0) , v2zero}, cpframe, false, pointer .. "Colorpicker", cptable)
                 end
 
-                colorpicker:Set(colorpicker.trans and {colorpicker.value, deftrans} or colorpicker.value)
+                colorpicker:Set(colorpicker.trans and {{colorpicker.value:ToHSV()}, deftrans} or {colorpicker.value:ToHSV()})
 
                 utility:Connect(uis.InputBegan, function(input)
                     if input.UserInputType == Enum.UserInputType.MouseButton1 then
@@ -1156,7 +1148,7 @@ function library:Window(info)
                                         local dvalues = colorpicker.dvalues
                                         local color = c3hsv(dvalues[1], dvalues[2], dvalues[3])
 
-                                        colorpicker:Set(colorpicker.trans and {color, dvalues[4]} or color)
+                                        colorpicker:Set(colorpicker.trans and {{color:ToHSV()}, dvalues[4]} or {color:ToHSV()})
                                     else
                                         colorpicker:Close()
                                     end
@@ -1216,7 +1208,7 @@ function library:Window(info)
                             local dvalues = colorpicker.dvalues
                             local color = c3hsv(dvalues[1], dvalues[2], dvalues[3])
 
-                            colorpicker:Set(colorpicker.trans and {color, dvalues[4]} or color)
+                            colorpicker:Set(colorpicker.trans and {{color:ToHSV()}, dvalues[4]} or {color:ToHSV()})
                         end
                     end
                 end)
@@ -1273,7 +1265,7 @@ function library:Window(info)
                         local dvalues = colorpicker.dvalues
                         local color = c3hsv(dvalues[1], dvalues[2], dvalues[3])
 
-                        colorpicker:Set(colorpicker.trans and {color, dvalues[4]} or color)
+                        colorpicker:Set(colorpicker.trans and {{color:ToHSV()}, dvalues[4]} or {color:ToHSV()})
                     end
                 end)
 
