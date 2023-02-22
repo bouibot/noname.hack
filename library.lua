@@ -880,7 +880,7 @@ function library:Window(info)
                 local flag = info.flag
                 local callback = info.callback or function() end
 
-                local colorpicker = {value = def, name = name, trans = trans, callback = callback, transval = deftrans, pointer = pointer, flag = flag, dvalues = {}, instances = {}}
+                local colorpicker = {value = def, name = name, trans = trans, callback = callback, pointer = pointer, flag = flag, dvalues = {}, instances = {}}
 
                 if pointer then
                     library.flags[pointer] = colorpicker
@@ -961,8 +961,6 @@ function library:Window(info)
 
                     local hsv = (self.trans and {self.value[1]:ToHSV()}) or {self.value:ToHSV()}
 
-                    print(hsv[1], hsv[2], hsv[3])
-
                     if h == 0 then
                         h = 1
                     end
@@ -971,7 +969,7 @@ function library:Window(info)
                         v = 1
                     end
 
-                    self.dvalues = {hsv[1], hsv[2], hsv[3], self.transval, false, false, false}
+                    self.dvalues = {hsv[1], hsv[2], hsv[3], self.trans and self.value[2] or 0, false, false, false}
 
                     local cpdropframe = utility:Draw("Square", v2new(35, 0), {
                         Color = c3rgb(20, 20, 20),
@@ -1036,7 +1034,7 @@ function library:Window(info)
                         Parent = cpdropframe_hue
                     })
 
-                    local cpdropframe_hue_picker = utility:Draw("Square", v2new(0, 0), {
+                    local cpdropframe_hue_picker = utility:Draw("Square", v2new(0, math.clamp(math.floor(self.dvalues[1]*100), 0, 99)), {
                         Color = c3rgb(255, 255, 255),
                         Size = v2new(7, 1),
                         Parent = cpdropframe_hue
@@ -1061,7 +1059,7 @@ function library:Window(info)
                         Parent = cpdropframe_trans
                     })
 
-                    local cpdropframe_trans_picker = utility:Draw("Square", v2new(0, 0), {
+                    local cpdropframe_trans_picker = utility:Draw("Square", v2new(0, math.clamp(math.floor(self.dvalues[4]*100), 0, 99)), {
                         Color = c3rgb(255, 255, 255),
                         Size = v2new(7, 1),
                         Parent = cpdropframe_trans
@@ -1100,7 +1098,7 @@ function library:Window(info)
                     return section:_Colorpicker(info, {v2new(-35, 0) , v2zero}, cpframe, false, pointer .. "Colorpicker", cptable)
                 end
 
-                colorpicker:Set(colorpicker.trans and {colorpicker.value, colorpicker.transval} or colorpicker.value)
+                colorpicker:Set(colorpicker.trans and {colorpicker.value, deftrans} or colorpicker.value)
 
                 utility:Connect(uis.InputBegan, function(input)
                     if input.UserInputType == Enum.UserInputType.MouseButton1 then
@@ -1772,7 +1770,7 @@ function library:Window(info)
                     
                     local list_frame = utility:Draw("Square", v2new(0, 19), {
                         Size = v2new(216, 2+16*#self.options),
-                        Color = c3rgb(40, 40, 40),
+                        Color = c3rgb(20, 20, 20),
                         Parent = dropdown_frame
                     })
 
@@ -1787,12 +1785,6 @@ function library:Window(info)
                         Parent = list_frame
                     })
 
-                    local list_gradient = utility:Draw("Image", v2zero, {
-                        Size = list_frame.Size,
-                        Transparency = 0.3,
-                        Parent = list_frame
-                    })
-
                     local list_scrollbar = utility:Draw("Square", v2new(list_frame.Size.X-6, 0), {
                         Size = v2new(6, list_frame.Size.Y/(#self.options - self.visOptions + 1)),
                         Color = window.accent,
@@ -1804,9 +1796,7 @@ function library:Window(info)
                         list_scrollbar.Visible = false
                     end
 
-                    utility:Image(list_gradient, "https://i.imgur.com/j9y4dux.png")
-
-                    self.instances = {list_frame, list_outline, list_gradient, list_scrollbar}
+                    self.instances = {list_frame, list_outline, list_scrollbar}
 
                     for i, v in pairs(self.options) do
                         local option_text = utility:Draw("Text", v2new(4, 2+16*(i-1)), {
