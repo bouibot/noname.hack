@@ -1785,8 +1785,8 @@ function library:Window(info)
                         Parent = list_frame
                     })
 
-                    local list_scrollbar = utility:Draw("Square", v2new(list_frame.Size.X-6, 0), {
-                        Size = v2new(6, list_frame.Size.Y/(#self.options - self.visOptions + 1)),
+                    local list_scrollbar = utility:Draw("Square", v2new(list_frame.Size.X-3, 0), {
+                        Size = v2new(3, list_frame.Size.Y/(#self.options - self.visOptions + 1)),
                         Color = window.accent,
                         Group = "accent",
                         Parent = list_frame
@@ -1873,7 +1873,7 @@ function library:Window(info)
 
                 function dropdown.Update(self)
                     if #self.instances > 1 then
-                        for i, v in pairs({select(5, unpack(self.instances))}) do
+                        for i, v in pairs({select(4, unpack(self.instances))}) do
                             if multi and table.find(self.value, v.Text) or not multi and self.value == v.Text then
                                 v.Color = window.accent
                             else
@@ -1891,9 +1891,9 @@ function library:Window(info)
                             end
                         end
 
-                        local max_y_pos = self.instances[1].Size.Y - self.instances[4].Size.Y
+                        local max_y_pos = self.instances[1].Size.Y - self.instances[3].Size.Y
                         
-                        self.instances[4].SetOffset(v2new(self.instances[1].Size.X-6, max_y_pos * ((1/(#self.options-self.visOptions))*(self.scrolling[1]-1))))
+                        self.instances[3].SetOffset(v2new(self.instances[1].Size.X-self.instances[3].Size.X, max_y_pos * ((1/(#self.options-self.visOptions))*(self.scrolling[1]-1))))
                     end
                 end
 
