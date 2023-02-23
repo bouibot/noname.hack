@@ -445,10 +445,11 @@ function library.Window(self, info, theme)
 
             for i, v in pairs(self.sections) do
                 v:Show()
-                v:Update()
             end
 
             self.on = true
+            
+            self:Update()
         end
 
         function tab.Hide(self)
@@ -460,6 +461,8 @@ function library.Window(self, info, theme)
             end
 
             self.on = false
+            
+            self:Update()
         end
 
         function tab.Update(self)
@@ -501,6 +504,10 @@ function library.Window(self, info, theme)
             end
 
             tab_frame.Color = self.on and window.theme.lcont or window.theme.dcont
+
+            for i, v in pairs(self.sections) do
+                v:Update()
+            end
         end
 
         function tab.Section(self, info)
