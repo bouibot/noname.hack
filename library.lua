@@ -34,12 +34,6 @@ local library = {
     loaded = false,
 }
 
-local folder = "noname.hack/cbro/cfgs"
-
-makefolder("noname.hack")
-makefolder("noname.hack/cbro")
-makefolder("noname.hack/cbro/cfgs")
-
 -- // utility
 
 local utility = {}
@@ -272,15 +266,24 @@ do
     utility.short_keybind_names = {["MouseButton1"] = "MB1", ["MouseButton2"] = "MB2", ["MouseButton3"] = "MB3", ["Insert"] = "INS", ["LeftAlt"] = "LALT", ["LeftControl"] = "LC", ["LeftShift"] = "LS", ["RightAlt"] = "RALT", ["RightControl"] = "RC", ["RightShift"] = "RS", ["CapsLock"] = "CAPS", ["Return"] = "RET", ["Backspace"] = "BSP"}
 end
 
-function library:Window(info)
+function library.Window(self, info, theme)
+
+    theme = theme or {
+        accent = c3rgb(255, 0, 0),
+        dcont = c3rgb(20, 20, 20),
+        lcont = c3rgb(40, 40, 40),
+        cont = c3rgb(30, 30, 30),
+        outline = c3rgb(0, 0, 0)
+    }
 
     local name = info.name or "worst ui library ever"
 
-    local window = {shit = {}, kbds = {}, rna = {}, sshit = nil, tabs = {}, accent = c3rgb(12, 157, 0), _last = {0, 0}, start = v2zero, connections = {}, dragging = false}
+    local window = {shit = {}, kbds = {}, rna = {}, sshit = nil, theme = theme, tabs = {}, _last = {0, 0}, start = v2zero, connections = {}, dragging = false}
 
     local main_frame = utility:Draw("Square", nil, {
         Size = v2new(500, 600),
-        Color = c3rgb(35, 35, 35),
+        Color = window.theme.lcont,
+        Group = "lcont",
         Position = utility:RoundVector(utility:ScreenSize() / 2 - v2new(250, 300))
     })
 
@@ -307,14 +310,15 @@ function library:Window(info)
 
     utility:Draw("Square", v2new(-1, -1), {
         Size = main_frame.Size + v2new(2, 2),
-        Color = c3rgb(20, 20, 20),
+        Color = window.theme.outline,
+        Group = "outline",
         Filled = false,
         Parent = main_frame
     })
 
     utility:Draw("Square", v2new(-2, -2), {
         Size = main_frame.Size + v2new(4, 4),
-        Color = window.accent,
+        Color = window.theme.accent,
         Filled = false,
         Group = "accent",
         Parent = main_frame
@@ -331,33 +335,37 @@ function library:Window(info)
 
     local pretab_frame = utility:Draw("Square", v2new(6, 20), {
         Size = v2new(488, 574),
-        Color = c3rgb(25, 25, 25),
+        Color = window.theme.dcont,
+        Group = "dcont",
         Parent = main_frame
     })
 
     utility:Draw("Square", v2new(-1, -1), {
         Size = pretab_frame.Size + v2new(2, 2),
-        Color = c3rgb(20, 20, 20),
+        Color = window.theme.dcont,
+        Group = "dcont",
         Filled = false,
         Parent = pretab_frame
     })
 
     utility:Draw("Square", v2new(-2, -2), {
         Size = pretab_frame.Size + v2new(4, 4),
-        Color = Color3.new(),
+        Color = c3rgb(),
+        Group = "outline",
         Filled = false,
         Parent = pretab_frame
     })
 
     local tabs_frame = utility:Draw("Square", v2new(6, 23), {
         Size = v2new(476, 545),
-        Color = c3rgb(35, 35, 35),
+        Color = window.theme.lcont,
+        Group = "lcont",
         Parent = pretab_frame
     })
 
     local tab_frame_accent = utility:Draw("Square", v2zero, {
         Size = v2new(0, 1),
-        Color = window.accent,
+        Color = window.theme.accent,
         Group = "accent",
         ZIndex = 1
     })
@@ -373,7 +381,8 @@ function library:Window(info)
 
     utility:Draw("Square", v2new(-1, -1), {
         Size = tabs_frame.Size + v2new(2, 2),
-        Color = c3rgb(45, 45, 45),
+        Color = window.theme.outline2,
+        Group = "outline2",
         Filled = false,
         Parent = tabs_frame
     })
@@ -397,13 +406,14 @@ function library:Window(info)
 
         local tab_frame = utility:Draw("Square", offset, {
             Size = v2new(utility:GetPlexSize(name) + 12, 18),
-            Color = c3rgb(35, 35, 35),
+            Color = window.theme.lcont,
             Parent = tabs_frame
         })
 
         local tab_frame_outline = utility:Draw("Square", v2new(-1, -1), {
             Size = tab_frame.Size + v2new(2, 2),
-            Color = c3rgb(45, 45, 45),
+            Color = window.theme.outline2,
+            Group = "outline2",
             Filled = false,
             Parent = tab_frame
         })
@@ -420,7 +430,8 @@ function library:Window(info)
 
         local tab_frame_hider = utility:Draw("Square", v2new(0, tab_frame.Size.Y), {
             Size = v2new(tab_frame.Size.X, 1),
-            Color = c3rgb(35, 35, 35),
+            Color = window.theme.lcont,
+            Group = "lcont",
             Parent = tab_frame
         })
 
@@ -429,7 +440,7 @@ function library:Window(info)
         table.insert(self.tabs, tab)
 
         function tab.Show(self)
-            tab_frame.Color = c3rgb(35, 35, 35)
+            tab_frame.Color = window.theme.lcont
             tab_frame_hider.Visible = true
 
             for i, v in pairs(self.sections) do
@@ -441,7 +452,7 @@ function library:Window(info)
         end
 
         function tab.Hide(self)
-            tab_frame.Color = c3rgb(25, 25, 25)
+            tab_frame.Color = window.theme.dcont
             tab_frame_hider.Visible = false
 
             for i, v in pairs(self.sections) do
@@ -488,6 +499,8 @@ function library:Window(info)
                     v.instances[1].SetOffset(v2new(sn == 1 and 6 or tabs_frame.Size.X - 234, offset))
                 end
             end
+
+            tab_frame.Color = self.on and window.theme.lcont or window.theme.dcont
         end
 
         function tab.Section(self, info)
@@ -510,35 +523,39 @@ function library:Window(info)
             if section.rna then
                 section_frame = utility:Draw("Square", v2new(side == "left" and 6 or tabs_frame.Size.X - 234, 16), {
                     Size = v2new(228, section.scale),
-                    Color = c3rgb(30, 30, 30),
+                    Color = window.theme.cont,
+                    Group = "cont"
                 })
 
                 table.insert(window.rna, section)
             else
                 section_frame = utility:Draw("Square", v2new(side == "left" and 6 or tabs_frame.Size.X - 234, 16), {
                     Size = v2new(228, section.scale),
-                    Color = c3rgb(30, 30, 30),
+                    Color = window.theme.cont,
+                    Group = "cont",
                     Parent = tabs_frame
                 })
             end
 
             local section_inline = utility:Draw("Square", v2new(-1, -1), {
                 Size = section_frame.Size + v2new(2, 2),
-                Color = c3rgb(),
+                Color = window.theme.outline,
+                Group = "outline",
                 Filled = false,
                 Parent = section_frame
             })
 
             local section_outline = utility:Draw("Square", v2new(-2, -2), {
                 Size = section_frame.Size + v2new(4, 4),
-                Color = c3rgb(40, 40, 40),
+                Color = window.theme.lcont,
+                Group = "lcont",
                 Filled = false,
                 Parent = section_frame
             })
 
             local section_accent = utility:Draw("Square", v2new(0, 0), {
                 Size = v2new(8, 2),
-                Color = window.accent,
+                Color = window.theme.accent,
                 Group = "accent",
                 Parent = section_frame
             })
@@ -562,7 +579,7 @@ function library:Window(info)
 
             local section_accent2 = utility:Draw("Square", v2new(11 + (#name * 7), 0), {
                 Size = v2new(228 - (11 + (#name * 7)), 2),
-                Color = window.accent,
+                Color = window.theme.accent,
                 Group = "accent",
                 Parent = section_frame
             })
@@ -652,7 +669,8 @@ function library:Window(info)
 
                 local keybind_frame = utility:Draw("Square", offsets[1], {
                     Size = v2new(40, 12),
-                    Color = c3rgb(40, 40, 40),
+                    Color = window.theme.lcont,
+                    Group = "lcont",
                     Parent = parent
                 })
 
@@ -671,7 +689,8 @@ function library:Window(info)
 
                 local keybind_outline = utility:Draw("Square", v2new(-1, -1), {
                     Size = keybind_frame.Size + v2new(2, 2),
-                    Color = c3rgb(),
+                    Color = window.theme.outline,
+                    Group = "outline",
                     Filled = false,
                     Parent = keybind_frame
                 })
@@ -736,6 +755,8 @@ function library:Window(info)
                         for i, v in pairs(self.minst) do
                             v.Remove()
                         end
+
+                        table.clear(self.minst)
                     end
 
                     window.shit.keybind = nil
@@ -746,13 +767,15 @@ function library:Window(info)
                     window:HideUselessDumbassFuckingShitStopPastingMyCodePleaseYouAreSkidAndImGayILikeBigBlackManOkNoProblemThisIsASexcretFuncteiotieitns4epoivi2n45obvi6j45bv74gvho4hgv487()
                     
                     local mframe = utility:Draw("Square", v2new(0, 15), {
-                        Color = c3rgb(20, 20, 20),
+                        Color = window.theme.dcont,
+                        Group = "dcont",
                         Size = v2new(48, 5 + 26),
                         Parent = keybind_frame
                     })
 
                     local mframe_outline = utility:Draw("Square", v2new(-1, -1), {
-                        Color = c3rgb(),
+                        Color = window.theme.outline,
+                        Group = "outline",
                         Size = mframe.Size + v2new(2, 2),
                         Filled = false,
                         Parent = mframe
@@ -765,7 +788,7 @@ function library:Window(info)
                         modes[i] = utility:Draw("Text", v2new(3, 2 + 14 * (i-1)), {
                             Font = 2,
                             Size = 13,
-                            Color = self.mode == v:lower() and window.accent or c3rgb(255, 255, 255),
+                            Color = self.mode == v:lower() and window.theme.accent or c3rgb(255, 255, 255),
                             Group = "accent",
                             Outline = true,
                             Text = v,
@@ -800,7 +823,7 @@ function library:Window(info)
                                         end
 
                                         for i, v in pairs({keybind.minst[3], keybind.minst[4]}) do
-                                            v.Color = keybind.mode == v.Text:lower() and window.accent or c3rgb(255, 255, 255)
+                                            v.Color = keybind.mode == v.Text:lower() and window.theme.accent or c3rgb(255, 255, 255)
                                         end
                                     else
                                         keybind:Close()
@@ -896,7 +919,8 @@ function library:Window(info)
 
                 local cpframe_outline = utility:Draw("Square", v2new(-1, -1), {
                     Size = cpframe.Size + v2new(2, 2),
-                    Color = c3rgb(),
+                    Color = window.theme.outline,
+                    Group = "outline",
                     Filled = false,
                     Parent = cpframe
                 })
@@ -964,20 +988,22 @@ function library:Window(info)
                     self.dvalues = {hsv[1], hsv[2], hsv[3], self.trans and self.value[2] or 0, false, false, false}
 
                     local cpdropframe = utility:Draw("Square", v2new(35, 0), {
-                        Color = c3rgb(20, 20, 20),
+                        Color = window.theme.dcont,
+                        Group = "dcont",
                         Size = v2new(self.trans and 152 or 137, 120),
                         Parent = cpframe
                     })
 
                     local cpdropframe_outline = utility:Draw("Square", v2new(-1, -1), {
-                        Color = c3rgb(),
+                        Color = window.theme.outline,
+                        Group = "outline",
                         Size = cpdropframe.Size + v2new(2, 2),
                         Filled = false,
                         Parent = cpdropframe
                     })
 
                     local cpdropframe_accent = utility:Draw("Square", v2zero, {
-                        Color = window.accent,
+                        Color = window.theme.accent,
                         Group = "accent",
                         Size = v2new(cpdropframe.Size.X, 1),
                         Parent = cpdropframe
@@ -990,7 +1016,8 @@ function library:Window(info)
                     })
 
                     local cpdropframe_color_outline = utility:Draw("Square", v2new(-1, -1), {
-                        Color = c3rgb(),
+                        Color = window.theme.outline,
+                        Group = "outline",
                         Size = cpdropframe_color.Size + v2new(2, 2),
                         Filled = false,
                         Parent = cpdropframe_color
@@ -1008,14 +1035,16 @@ function library:Window(info)
                     })
 
                     local cpdropframe_color_cursor_outline = utility:Draw("Square", v2new(-1, -1), {
-                        Color = c3rgb(),
+                        Color = window.theme.outline,
+                        Group = "outline",
                         Size = cpdropframe_color_cursor.Size + v2new(2, 2),
                         Filled = false,
                         Parent = cpdropframe_color_cursor
                     })
 
                     local cpdropframe_hue = utility:Draw("Square", v2new(120, 10), {
-                        Color = c3rgb(),
+                        Color = window.theme.outline,
+                        Group = "outline",
                         Size = v2new(7, 100),
                         Filled = false,
                         Parent = cpdropframe
@@ -1033,14 +1062,16 @@ function library:Window(info)
                     })
 
                     local cpdropframe_hue_picker_outline = utility:Draw("Square", v2new(-1, -1), {
-                        Color = c3rgb(),
+                        Color = window.theme.outline,
+                        Group = "outline",
                         Size = cpdropframe_hue_picker.Size + v2new(2, 2),
                         Filled = false,
                         Parent = cpdropframe_hue_picker
                     })
 
                     local cpdropframe_trans = utility:Draw("Square", v2new(137, 10), {
-                        Color = c3rgb(),
+                        Color = window.theme.outline,
+                        Group = "outline",
                         Size = v2new(7, 100),
                         Filled = false,
                         Parent = cpdropframe
@@ -1058,7 +1089,8 @@ function library:Window(info)
                     })
 
                     local cpdropframe_trans_picker_outline = utility:Draw("Square", v2new(-1, -1), {
-                        Color = c3rgb(),
+                        Color = window.theme.outline,
+                        Group = "outline",
                         Size = cpdropframe_trans_picker.Size + v2new(2, 2),
                         Filled = false,
                         Parent = cpdropframe_trans_picker
@@ -1287,13 +1319,15 @@ function library:Window(info)
 
                 local button_frame = utility:Draw("Square", v2new(6, self:NextObjectPosition()), {
                     Size = v2new(216, 18),
-                    Color = c3rgb(40, 40, 40),
+                    Color = window.theme.lcont,
+                    Group = "lcont",
                     Parent = section_frame
                 })
 
                 local button_outline = utility:Draw("Square", v2new(-1, -1), {
                     Size = button_frame.Size + v2new(2, 2),
-                    Color = c3rgb(),
+                    Color = window.theme.outline,
+                    Group = "outline",
                     Filled = false,
                     Parent = button_frame
                 })
@@ -1345,13 +1379,15 @@ function library:Window(info)
 
                 local textbox_frame = utility:Draw("Square", v2new(6, self:NextObjectPosition()), {
                     Size = v2new(216, 18),
-                    Color = c3rgb(40, 40, 40),
+                    Color = window.theme.lcont,
+                    Group = "lcont",
                     Parent = section_frame
                 })
 
                 local textbox_outline = utility:Draw("Square", v2new(-1, -1), {
                     Size = textbox_frame.Size + v2new(2, 2),
-                    Color = c3rgb(),
+                    Color = window.theme.outline,
+                    Group = "outline",
                     Filled = false,
                     Parent = textbox_frame
                 })
@@ -1470,7 +1506,8 @@ function library:Window(info)
 
                 local toggle_outline = utility:Draw("Square", v2new(-1, -1), {
                     Size = toggle_frame.Size + v2new(2, 2),
-                    Color = c3rgb(),
+                    Color = window.theme.outline,
+                    Group = "outline",
                     Filled = false,
                     Parent = toggle_frame
                 })
@@ -1497,7 +1534,7 @@ function library:Window(info)
                 end
 
                 function toggle.UpdateColor(self)
-                    toggle_frame.Color = self.state and window.accent or c3rgb(40, 40, 40)
+                    toggle_frame.Color = self.state and window.theme.accent or window.theme.lcont
                 end
 
                 function toggle.UpdateFlag(self, state)
@@ -1576,19 +1613,21 @@ function library:Window(info)
 
                 local slider_frame = utility:Draw("Square", v2new(0, 16), {
                     Size = v2new(216, 8),
-                    Color = c3rgb(40, 40, 40),
+                    Color = window.theme.lcont,
+                    Group = "lcont",
                     Parent = slider_title
                 })
 
                 local slider_outline = utility:Draw("Square", v2new(-1, -1), {
                     Size = slider_frame.Size + v2new(2, 2),
-                    Color = c3rgb(),
+                    Color = window.theme.outline,
+                    Group = "outline",
                     Filled = false,
                     Parent = slider_frame
                 })
 
                 local slider_bar = utility:Draw("Square", v2new(), {
-                    Color = window.accent,
+                    Color = window.theme.accent,
                     Size = v2new(0, slider_frame.Size.Y),
                     Group = "accent",
                     Parent = slider_frame
@@ -1713,13 +1752,15 @@ function library:Window(info)
 
                 local dropdown_frame = utility:Draw("Square", v2new(0, 17), {
                     Size = v2new(216, 18),
-                    Color = c3rgb(40, 40, 40),
+                    Color = window.theme.lcont,
+                    Group = "lcont",
                     Parent = dropdown_title
                 })
 
                 local dropdown_outline = utility:Draw("Square", v2new(-1, -1), {
                     Size = dropdown_frame.Size + v2new(2, 2),
-                    Color = c3rgb(),
+                    Color = window.theme.outline,
+                    Group = "outline",
                     Filled = false,
                     Parent = dropdown_frame
                 })
@@ -1762,7 +1803,8 @@ function library:Window(info)
                     
                     local list_frame = utility:Draw("Square", v2new(0, 19), {
                         Size = v2new(216, 2+16*#self.options),
-                        Color = c3rgb(20, 20, 20),
+                        Color = window.theme.dcont,
+                        Group = "dcont",
                         Parent = dropdown_frame
                     })
 
@@ -1772,14 +1814,15 @@ function library:Window(info)
 
                     local list_outline = utility:Draw("Square", v2new(-1, -1), {
                         Size = list_frame.Size + v2new(2, 2),
-                        Color = c3rgb(),
+                        Color = window.theme.outline,
+                        Group = "outline",
                         Filled = false,
                         Parent = list_frame
                     })
 
                     local list_scrollbar = utility:Draw("Square", v2new(list_frame.Size.X-3, 0), {
                         Size = v2new(3, list_frame.Size.Y/(#self.options - self.visOptions + 1)),
-                        Color = window.accent,
+                        Color = window.theme.accent,
                         Group = "accent",
                         Parent = list_frame
                     })
@@ -1792,7 +1835,7 @@ function library:Window(info)
 
                     for i, v in pairs(self.options) do
                         local option_text = utility:Draw("Text", v2new(4, 2+16*(i-1)), {
-                            Color = (multi and table.find(self.value, v) or not multi and self.value == v) and window.accent or c3rgb(255, 255, 255),
+                            Color = (multi and table.find(self.value, v) or not multi and self.value == v) and window.theme.accent or c3rgb(255, 255, 255),
                             Outline = true,
                             Size = 13,
                             Font = 2,
@@ -1867,7 +1910,7 @@ function library:Window(info)
                     if #self.instances > 1 then
                         for i, v in pairs({select(4, unpack(self.instances))}) do
                             if multi and table.find(self.value, v.Text) or not multi and self.value == v.Text then
-                                v.Color = window.accent
+                                v.Color = window.theme.accent
                             else
                                 v.Color = c3rgb(255, 255, 255)
                             end
@@ -1907,7 +1950,7 @@ function library:Window(info)
                     if input.UserInputType == Enum.UserInputType.MouseButton1 and main_frame.Visible and (tab.on or table.find(window.rna, section)) then
                         if #dropdown.instances > 1 then
                             if utility:MouseOverDrawing(dropdown.instances[1]) then
-                                local option_counter = (uis:GetMouseLocation().Y - dropdown.instances[1].Position.y)/16
+                                local option_counter = (uis:GetMouseLocation().Y - (dropdown.instances[1].Position.Y+2))/16
 
                                 if option_counter%1 ~= 0 then
                                     option_counter = math.floor(option_counter)+1
@@ -2026,12 +2069,18 @@ function library:Window(info)
         return false
     end
 
-    function window.NewAccent(self, new_accent)
-        for i, v in pairs(library.groups.accent) do
-            v.Color = new_accent
+    function window.NewTheme(self, theme)
+        self.theme = theme
+
+        for i, _ in pairs(self.theme) do
+            for _, obj in pairs(library.groups[i]) do
+                obj.Color = self.theme[i]
+            end
         end
 
-        self.accent = new_accent
+        for _, tab in pairs(self.tabs) do
+            tab:Update()
+        end
     end
 
     function window.SelectTab(self, name)
@@ -2152,12 +2201,13 @@ function library:Window(info)
             local dur = info.dur or info.duration or 3
             local show_dur_bar = info.show_dur_bar or info.sdb or true
             local pulse = info.pulse or false
-            local pulse_color = info.pulsecolor or info.pulse_color or info.pc or {c3rgb(), c3rgb(194, 164, 16)}
+            local pulse_color = info.pulsecolor or info.pulse_color or info.pc or {c3rgb(0, 0, 0), c3rgb(194, 164, 16)}
 
             local ntif = {text = text, dur = dur, pulse = pulse, pc = pulse_color, pm = 1, ptick = 0, create_tick = tick(), sdb = show_dur_bar, instances = {}}
 
             local ntif_frame = utility:Draw("Square", nil, {
-                Color = c3rgb(40, 40, 40),
+                Color = window.theme.lcont,
+                Group = "lcont",
                 Size = v2new(7 + utility:GetPlexSize(text), 4 + (#text:split("\n")*13)),
                 Position = v2new(-utility:GetPlexSize(text), 0)
             }, true)
@@ -2175,7 +2225,8 @@ function library:Window(info)
             end
 
             local ntif_frame_outline = utility:Draw("Square", v2new(-1, -1), {
-                Color = c3rgb(),
+                Color = window.theme.outline,
+                Group = "outline",
                 Size = ntif_frame.Size + v2new(2, 2),
                 Filled = false,
                 Parent = ntif_frame
@@ -2191,7 +2242,7 @@ function library:Window(info)
             }, true)
 
             local ntif_dur_line = utility:Draw("Square", v2new(0, ntif_frame.Size.Y), {
-                Color = window.accent,
+                Color = window.theme.accent,
                 Group = "accent",
                 Size = v2new(ntif_frame.Size.X / 5, 1),
                 Visible = ntif.sdb,
@@ -2200,7 +2251,7 @@ function library:Window(info)
 
             local ntif_accent = utility:Draw("Square", v2zero, {
                 Size = v2new(2, ntif_frame.Size.Y),
-                Color = not ntif.pulse and window.accent or ntif.pc[1],
+                Color = not ntif.pulse and window.theme.accent or ntif.pc[1],
                 Group = "accent",
                 Parent = ntif_frame
             }, true)
@@ -2290,19 +2341,21 @@ function library:Window(info)
         local kblist = {visible = false, instances = {}}
 
         local kblist_frame = utility:Draw("Square", v2zero, {
-            Color = c3rgb(40, 40, 40),
+            Color = window.theme.lcont,
+            Group = "lcont",
             Size = v2new()
         }, true)
 
         local kblist_outline = utility:Draw("Square", v2new(-1, -1), {
-            Color = c3rgb(),
+            Color = window.theme.outline,
+            Group = "outline",
             Size = kblist_frame.Size + v2new(2, 2),
             Filled = false,
             Parent = kblist_frame
         }, true)
 
         local kblist_accent = utility:Draw("Square", v2zero, {
-            Color = window.accent,
+            Color = window.theme.accent,
             Size = v2new(kblist_frame.Size.X, 1),
             Group = "accent",
             Parent = kblist_frame
@@ -2373,12 +2426,14 @@ function library:Window(info)
         local watermark = {text = "worsst fucking ui without doxxs", visible = false, instances = {}}
 
         local watermark_frame = utility:Draw("Square", v2zero, {
-            Color = c3rgb(40, 40, 40),
+            Color = window.theme.lcont,
+            Group = "lcont",
             Size = v2new(0, 20),
         }, true)
 
         local watermark_inline = utility:Draw("Square", v2new(-1, -1), {
-            Color = c3rgb(20, 20, 20),
+            Color = window.theme.dcont,
+            Group = "dcont",
             Size = watermark_frame.Size + v2new(2, 2),
             Filled = false,
             Parent = watermark_frame
@@ -2392,7 +2447,7 @@ function library:Window(info)
         }, true)
 
         local watermark_accent = utility:Draw("Square", v2new(), {
-            Color = window.accent,
+            Color = window.theme.accent,
             Size = v2new(watermark_frame.Size.X, 1),
             Group = "accent",
             Parent = watermark_frame
@@ -2458,12 +2513,14 @@ function library:Window(info)
         local tooltip = {instances = {}}
 
         local tt_frame = utility:Draw("Square", nil, {
-            Color = c3rgb(20, 20, 20),
+            Color = window.theme.dcont,
+            Group = "dcont",
             Size = v2new(0, 17)
         })
 
         local tt_frame_outline = utility:Draw("Square", v2new(-1, -1), {
-            Color = c3rgb(),
+            Color = window.theme.outline,
+            Group = "outline",
             Size = tt_frame.Size + v2new(2, 2),
             Filled = false,
             Parent = tt_frame
@@ -2526,7 +2583,7 @@ function library:Window(info)
         local cursor = {position = v2zero, instances = {}}
 
         local triangle = utility:Draw("Triangle", v2zero, {
-            Color = window.accent,
+            Color = window.theme.accent,
             Group = "accent",
             Filled = true,
             Thickness = 0,
@@ -2534,7 +2591,8 @@ function library:Window(info)
         })
 
         local triangle_outline = utility:Draw("Triangle", v2zero, {
-            Color = c3rgb(),
+            Color = window.theme.outline,
+            Group = "outline",
             Filled = false,
             Thickness = 1,
             ZIndex = 66
