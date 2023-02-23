@@ -2659,54 +2659,50 @@ function library.Window(self, info, theme)
                     if input.UserInputType == Enum.UserInputType.MouseButton2 then
                         local slider_visible = false
 
-                        for _, tab in pairs(self.tabs) do
+                        for _, section in pairs(window.sshit.sections) do
                             if slider_visible then break end
-                            for _, section in pairs(tab.sections) do
+                            for _, slider in pairs(section.things.sliders) do
                                 if slider_visible then break end
 
-                                for _, slider in pairs(section.things.sliders) do
-                                    if slider_visible then break end
+                                local section_frame = section.instances[1]
+                                local slider_title = slider.instances[1]
 
-                                    local section_frame = section.instances[1]
-                                    local slider_title = slider.instances[1]
+                                if utility:MouseOverPosition({section_frame.Position + v2new(0, slider_title.GetOffset().Y), section_frame.Position + v2new(section_frame.Size.X, slider_title.GetOffset().Y + 29)}) then
+                                    slider_visible = true
 
-                                    if utility:MouseOverPosition({section_frame.Position + v2new(0, slider_title.GetOffset().Y), section_frame.Position + v2new(section_frame.Size.X, slider_title.GetOffset().Y + 29)}) then
-                                        slider_visible = true
+                                    slider_section:SetPositionIHateMyselfAndIWannaDieOk(slider_title.Position + v2new(2, 2))
 
-                                        slider_section:SetPositionIHateMyselfAndIWannaDieOk(slider_title.Position + v2new(2, 2))
+                                    anim_min.min = slider.min
+                                    anim_min.max = slider.max
+                                    anim_min.dec = slider.dec
 
-                                        anim_min.min = slider.min
-                                        anim_min.max = slider.max
-                                        anim_min.dec = slider.dec
+                                    anim_max.min = slider.min
+                                    anim_max.max = slider.max
+                                    anim_max.dec = slider.dec
 
-                                        anim_max.min = slider.min
-                                        anim_max.max = slider.max
-                                        anim_max.dec = slider.dec
+                                    slider_flag = slider.pointer
 
-                                        slider_flag = slider.pointer
+                                    if self.saved_settings[slider.pointer] then
+                                        local settings = self.saved_settings[slider.pointer]
 
-                                        if self.saved_settings[slider.pointer] then
-                                            local settings = self.saved_settings[slider.pointer]
+                                        anim_enabled:Set(settings.enabled)
+                                        anim_min:Set(settings.min)
+                                        anim_max:Set(settings.max)
+                                        anim_speed:Set(settings.speed)
+                                    else
+                                        anim_enabled:Set(false)
+                                        anim_min:Set(slider.min)
+                                        anim_max:Set(slider.max)
+                                        anim_speed:Set(1)
 
-                                            anim_enabled:Set(settings.enabled)
-                                            anim_min:Set(settings.min)
-                                            anim_max:Set(settings.max)
-                                            anim_speed:Set(settings.speed)
-                                        else
-                                            anim_enabled:Set(false)
-                                            anim_min:Set(slider.min)
-                                            anim_max:Set(slider.max)
-                                            anim_speed:Set(1)
-
-                                            self.saved_settings[slider.pointer] = {
-                                                enabled = false,
-                                                min = slider.min,
-                                                max = slider.max,
-                                                speed = 1,
-                                                dec = slider.dec,
-                                                random_angle_offset = math.random(-720, 720)
-                                            }
-                                        end
+                                        self.saved_settings[slider.pointer] = {
+                                            enabled = false,
+                                            min = slider.min,
+                                            max = slider.max,
+                                            speed = 1,
+                                            dec = slider.dec,
+                                            random_angle_offset = math.random(-720, 720)
+                                        }
                                     end
                                 end
                             end
