@@ -11,7 +11,7 @@ splix copy (not 1:1)
 # images/preview
 
 <p align = "center">
-  <img scr = "https://s3.us-east-1.wasabisys.com/e-zimagehosting/7832f20c-64f3-46ac-bbdc-24b47117be2a/shp87iyd.png">
+  <img width = "500" height = "600" scr = "https://s3.us-east-1.wasabisys.com/e-zimagehosting/7832f20c-64f3-46ac-bbdc-24b47117be2a/shp87iyd.png">
 </p>
 
 # community
