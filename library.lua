@@ -955,7 +955,7 @@ function library.Window(self, info, theme)
                 end 
 
                 function colorpicker.Get(self)
-                    return not self.trans and {self.value:ToHSV()} or {self.value[1]:ToHSV(), self.value[2]}
+                    return not self.trans and {self.value:ToHSV()} or {{self.value[1]:ToHSV()}, self.value[2]}
                 end
 
                 function colorpicker.Update(self)
