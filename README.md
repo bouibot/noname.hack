@@ -10,7 +10,9 @@ splix copy (not 1:1)
 
 # images/preview
 
-https://s3.us-east-1.wasabisys.com/e-zimagehosting/7832f20c-64f3-46ac-bbdc-24b47117be2a/shp87iyd.png
+<p align = "center">
+  <img scr = "https://s3.us-east-1.wasabisys.com/e-zimagehosting/7832f20c-64f3-46ac-bbdc-24b47117be2a/shp87iyd.png">
+</p>
 
 # community
 
