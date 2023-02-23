@@ -2447,7 +2447,8 @@ function library.Window(self, info, theme)
         }, true)
 
         local watermark_outline = utility:Draw("Square", v2new(-2, -2), {
-            Color = c3rgb(0, 0, 0),
+            Color = window.theme.outline,
+            Group = "outline",
             Size = watermark_frame.Size + v2new(4, 4),
             Filled = false,
             Parent = watermark_frame
