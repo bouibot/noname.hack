@@ -6,7 +6,7 @@ splix copy (not 1:1)
 
 # rules:
   1. da hoodians got no permission to use it (counts as pasting)
-  2. palestine people have no permission to use it (counts as skidding)
+  2. palestine (fuckoffvile) people have no permission to use it (counts as skidding)
 
 # community
 
