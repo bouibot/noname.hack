@@ -273,7 +273,8 @@ function library.Window(self, info, theme)
         dcont = c3rgb(20, 20, 20),
         lcont = c3rgb(40, 40, 40),
         cont = c3rgb(30, 30, 30),
-        outline = c3rgb(0, 0, 0)
+        outline = c3rgb(0, 0, 0),
+        outline2 = c3rgb(45, 45, 45)
     }
 
     local name = info.name or "worst ui library ever"
@@ -448,7 +449,7 @@ function library.Window(self, info, theme)
             end
 
             self.on = true
-            
+
             self:Update()
         end
 
@@ -461,7 +462,7 @@ function library.Window(self, info, theme)
             end
 
             self.on = false
-            
+
             self:Update()
         end
 
@@ -1561,14 +1562,14 @@ function library.Window(self, info, theme)
 
                 function toggle.Keybind(self, info)
                     info.name = self.name
-                    section:_Keybind(info, {toggle_frame.GetOffset() + v2new(169, -14), v2new()}, toggle_frame, false, tab.name .. section.name .. info.name .. "Keybind", section.name)
+                    section:_Keybind(info, {v2new(175, 0), v2new()}, toggle_frame, false, tab.name .. section.name .. info.name .. "Keybind", section.name)
                     toggle.kexs = true
                 end
 
                 function toggle.Colorpicker(self, info)
                     info.name = self.name
                     self.cps = {}
-                    return section:_Colorpicker(info, {toggle_frame.GetOffset() + v2new(179, -14), v2new()}, toggle_frame, false, tab.name .. section.name .. info.name .. "Colorpicker", self.cps)
+                    return section:_Colorpicker(info, {v2new(185, -1), v2new()}, toggle_frame, false, tab.name .. section.name .. info.name .. "Colorpicker", self.cps)
                 end
 
                 toggle:Set(default)
