@@ -524,7 +524,7 @@ function library.Window(self, info, theme)
 
             -- // section
 
-            local section = {name = name, instances = {}, scale = 0, things = {buttons = {}, toggles = {}, sliders = {}, keybinds = {}}, rna = render_non_attached}
+            local section = {name = name, instances = {}, scale = 0, things = {buttons = {}, toggles = {}, sliders = {}, keybinds = {}, lists = {}}, rna = render_non_attached}
 
             local section_frame 
 
@@ -623,6 +623,10 @@ function library.Window(self, info, theme)
 
                 for i, v in pairs(self.things.toggles) do
                     v:UpdateColor()
+                end
+
+                for i, v in pairs(self.things.lists) do
+                    v:update()
                 end
             end
 
@@ -2030,6 +2034,166 @@ function library.Window(self, info, theme)
                 return self:_Colorpicker(info, {v2new(section_frame.Size.X - 36, self:NextObjectPosition() + 2), v2new(6, self:NextObjectPosition())}, section_frame, true, tab.name .. section.name .. info.name, {})
             end
 
+            function section.List(self, info)
+                info = info or {}
+
+                local name = info.name or "list"
+                local options = info.options or {"option 1", "option 2"}
+                local def = info.def or info.default or options[1]
+                local flag = info.flag
+                local pointer = info.pointer or tab.name .. section.name .. name 
+
+                local list = {name = name, value = def, scroll = {}, options = options, flag = flag, pointer = pointer, opinst = {}}
+
+                if pointer then
+                    library.pointers[list] = list
+                end
+
+                local list_title = utility:Draw("Text", v2new(6, self:NextObjectPosition()-2), {
+                    Color = c3rgb(255, 255, 255),
+                    Outline = true,
+                    Size = 13,
+                    Font = 2,
+                    Text = name,
+                    Parent = section_frame
+                })
+
+                local list_frame = utility:Draw("Square", v2new(0, 15), {
+                    Color = window.theme.dcont,
+                    Group = "dcont",
+                    Size = v2new(216, 140),
+                    Parent = list_title
+                })
+
+                local list_frame_outline = utility:Draw("Square", v2new(-1, -1), {
+                    Color = window.theme.outline,
+                    Group = "outline",
+                    Size = list_frame.Size + v2new(2, 2),
+                    Filled = false,
+                    Parent = list_frame
+                })
+
+                local list_frame_scrollbar = utility:Draw("Square", v2new(list_frame.Size.X-3, 0), {
+                    Color = window.theme.accent,
+                    Group = "accent",
+                    Size = v2new(3, 0),
+                    Parent = list_frame
+                })
+
+                function list.fix_string(self, value)
+                    return #value < 30 and value or value:sub(1, 27) .. "..."
+                end
+
+                function list.draw_options(self)
+                    for i, v in pairs(self.opinst) do
+                        v.Remove()
+                    end
+
+                    table.clear(self.opinst)
+
+                    self.scroll = {1, 10}
+
+                    for i, text in pairs(self.options) do
+
+                        local list_option = utility:Draw("Text", v2new(3, (i-1)*14), {
+                            Color = self.value == text and window.theme.accent or c3rgb(255, 255, 255),
+                            Outline = true,
+                            Size = 13,
+                            Font = 2,
+                            Text = self:fix_string(text),
+                            Visible = i >= self.scroll[1] and i <= self.scroll[2],
+                            Parent = list_frame
+                        })
+
+                        table.insert(self.opinst, list_option)
+
+                    end
+
+                    self:update()
+                end
+
+                function list.update(self)
+                    for i, v in pairs(self.opinst) do
+                        v.Visible = i >= self.scroll[1] and i <= self.scroll[2]
+                        if v.Visible then
+                            v.Color = self.value == self.options[i] and window.theme.accent or c3rgb(255, 255, 255)
+                            v.SetOffset(v2new(3, (i - self.scroll[1])*14))
+                        end
+                    end
+
+                    list_frame_scrollbar.Visible = #self.options > 10 and true or false
+                    list_frame_scrollbar.Size = v2new(3, list_frame.Size.Y / 11)
+
+                    list_frame_scrollbar.SetOffset(v2new(list_frame.Size.X-3, ((1/(#self.options-10)*(self.scroll[1]-1)))*(list_frame.Size.Y-list_frame_scrollbar.Size.Y)))
+                end
+
+                function list.Refresh(self, new_options)
+                    self.options = new_options
+
+                    self:draw_options()
+                end
+
+                function list.Get(self)
+                    return self.value
+                end
+
+                function list.Set(self, value)
+                    self.value = value
+
+                    if self.flag then
+                        library.flags[flag] = self.value
+                    end
+
+                    self:update()
+                end
+
+                utility:Connect(uis.InputBegan, function(input)
+                    if input.UserInputType == Enum.UserInputType.MouseButton1 and main_frame.Visible and (tab.on or table.find(window.rna, section)) and not window:FakeRealMouseFuckingImAloneGoingToKillMyselfWithKnife(section) and utility:MouseOverDrawing(list_frame) then
+                        local offset = uis:GetMouseLocation().Y - list_frame.Position.Y
+
+                        local option_index = math.clamp(offset/14, 1, 10)
+
+                        if option_index % 1 ~= 0 then
+                            option_index = math.floor(option_index) + 1
+                        end
+
+                        local index = list.scroll[1] - 1 + option_index
+
+                        if list.options[index] then
+                            list:Set(list.options[index])
+                        end
+                    end
+                end)
+
+                utility:Connect(uis.InputChanged, function(input)
+                    if input.UserInputType == Enum.UserInputType.MouseWheel and main_frame.Visible and (tab.on or table.find(window.rna, section)) and not window:FakeRealMouseFuckingImAloneGoingToKillMyselfWithKnife(section) and utility:MouseOverDrawing(list_frame) then
+                        local direction = input.Position.Z > 0 and "up" or "down"
+                        
+                        local min, max = list.scroll[1], list.scroll[2]
+
+                        if direction == "up" then
+                            list.scroll[1] = min ~= 1 and min - 1 or min
+                            list.scroll[2] = min ~= 1 and max - 1 or max
+                        else
+                            list.scroll[1] = max ~= #list.options and min + 1 or min
+                            list.scroll[2] = max ~= #list.options and max + 1 or max
+                        end
+
+                        list:update()
+                    end
+                end)
+
+                list:draw_options()
+
+                utility:Combine(self.instances, {list_title, list_frame, list_frame_outline, list_frame_scrollbar, unpack(list.opinst)})
+
+                self:UpdateScale(153)
+
+                table.insert(self.things.lists, list)
+
+                return list
+            end
+
             section.instances = {section_frame, section_inline, section_outline, section_title, section_title_bold, section_accent, section_accent2}
 
             if not section.rna then
@@ -2192,6 +2356,10 @@ function library.Window(self, info, theme)
             end
 
             uis.MouseIconEnabled = false
+        end
+
+        for i, v in pairs(self.tabs) do
+            v:Update()
         end
 
         self:HideUselessDumbassFuckingShitStopPastingMyCodePleaseYouAreSkidAndImGayILikeBigBlackManOkNoProblemThisIsASexcretFuncteiotieitns4epoivi2n45obvi6j45bv74gvho4hgv487()
