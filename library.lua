@@ -2046,7 +2046,7 @@ function library.Window(self, info, theme)
                 local list = {name = name, value = def, scroll = {}, options = options, flag = flag, pointer = pointer, opinst = {}}
 
                 if pointer then
-                    library.pointers[list] = list
+                    library.pointers[pointer] = list
                 end
 
                 local list_title = utility:Draw("Text", v2new(6, self:NextObjectPosition()-2), {
