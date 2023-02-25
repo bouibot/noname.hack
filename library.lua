@@ -2114,14 +2114,14 @@ function library.Window(self, info, theme)
 
                 function list.update(self)
                     for i, v in pairs(self.opinst) do
-                        v.Visible = i >= self.scroll[1] and i <= self.scroll[2]
+                        v.Visible = list_frame.Visible and i >= self.scroll[1] and i <= self.scroll[2]
                         if v.Visible then
                             v.Color = self.value == self.options[i] and window.theme.accent or c3rgb(255, 255, 255)
                             v.SetOffset(v2new(3, (i - self.scroll[1])*14))
                         end
                     end
 
-                    list_frame_scrollbar.Visible = #self.options > 10 and true or false
+                    list_frame_scrollbar.Visible = list_frame.Visible and #self.options > 10 and true or false
                     list_frame_scrollbar.Size = v2new(3, list_frame.Size.Y / 11)
 
                     list_frame_scrollbar.SetOffset(v2new(list_frame.Size.X-3, ((1/(#self.options-10)*(self.scroll[1]-1)))*(list_frame.Size.Y-list_frame_scrollbar.Size.Y)))
@@ -2185,7 +2185,7 @@ function library.Window(self, info, theme)
 
                 list:draw_options()
 
-                utility:Combine(self.instances, {list_title, list_frame, list_frame_outline, list_frame_scrollbar, unpack(list.opinst)})
+                self.instances = utility:Combine(self.instances, {list_title, list_frame, list_frame_outline, list_frame_scrollbar, unpack(list.opinst)})
 
                 self:UpdateScale(153)
 
