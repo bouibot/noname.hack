@@ -2210,6 +2210,7 @@ function library.Window(self, info, theme)
             local show_dur_bar = info.show_dur_bar or info.sdb or true
             local pulse = info.pulse or false
             local pulse_color = info.pulsecolor or info.pulse_color or info.pc or {c3rgb(0, 0, 0), c3rgb(194, 164, 16)}
+            local text_highlight = info.th or info.text_highlight or {}
 
             local ntif = {text = text, dur = dur, pulse = pulse, pc = pulse_color, pm = 1, ptick = 0, create_tick = tick(), sdb = show_dur_bar, instances = {}}
 
@@ -2264,6 +2265,25 @@ function library.Window(self, info, theme)
                 Parent = ntif_frame
             }, true)
 
+            local highligted = {}
+
+            for _, v in pairs(text_highlight) do
+                local s, e = ntif.text:find(v[1])
+
+                if s and e then
+                    local ntif_high = utility:Draw("Text", v2new((s-1)*7, 0), {
+                        Color = v[2],
+                        Outline = true,
+                        Size = 13,
+                        Font = 2,
+                        Text = ntif.text:sub(s, e),
+                        Parent = ntif_text
+                    }, true)
+    
+                    table.insert(highligted, ntif_high)
+                end
+            end
+
             ntif.lupapupa = utility:Connect(rs.Heartbeat, function()
                 if ntif.sdb then
                     ntif_dur_line.SetOffset(v2new(((tick()-ntif.create_tick) / ntif.dur) * (ntif_frame.Size.X * 0.8), ntif_frame.Size.Y))
@@ -2312,7 +2332,7 @@ function library.Window(self, info, theme)
                 notiflist:reposition()
             end
 
-            ntif.instances = {ntif_frame, ntif_frame_outline, ntif_text, ntif_dur_line, ntif_accent}
+            ntif.instances = {ntif_frame, ntif_frame_outline, ntif_text, ntif_dur_line, ntif_accent, unpack(highligted)}
 
             table.insert(self.ntifs, ntif)
 
