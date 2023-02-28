@@ -117,10 +117,47 @@ do
         end)
         rawset(fakeDraw, "__properties", properties)
         rawset(fakeDraw, "children", {})
-        rawset(fakeDraw, "Lerp", function(instanceTo, instanceTime)
+        rawset(fakeDraw, "Lerp", function(to, time)
             if not rawget(fakeDraw, "__OBJECT_EXIST") then return end
 
-            utility.vozoid_tween.new(fakeDraw, TweenInfo.new(instanceTime, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut), instanceTo):Play()
+            --utility.vozoid_tween.new(fakeDraw, TweenInfo.new(instanceTime, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut), instanceTo):Play()
+
+            local from = {}
+	
+            for i, _ in pairs(to) do
+                from[i] = fakeDraw[i]
+            end
+            
+            local elapsed = 0
+
+            if lerpLoop then
+                lerpLoop:Disconnect()
+                lerpLoop = nil
+            end
+            
+            local loop; loop = rs.Heartbeat:Connect(function(delta)
+                
+                if elapsed == time then
+                    for i, v in pairs(to) do
+                        fakeDraw[i] = v
+                    end
+
+                    lerpLoop = nil
+                    
+                    loop:Disconnect()
+                end
+
+                local ptc = (elapsed / time)
+                
+                for i, v in pairs(to) do
+                    fakeDraw[i] = from[i] + (v - from[i]) * ptc
+                end
+                
+                elapsed = math.clamp(elapsed + delta, 0, time)
+                
+            end)
+
+            lerpLoop = loop
 
         end)
 
