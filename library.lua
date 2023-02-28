@@ -117,6 +117,9 @@ do
         end)
         rawset(fakeDraw, "__properties", properties)
         rawset(fakeDraw, "children", {})
+		
+        local lerpLoop
+
         rawset(fakeDraw, "Lerp", function(to, time)
             if not rawget(fakeDraw, "__OBJECT_EXIST") then return end
 
@@ -130,7 +133,7 @@ do
             
             local elapsed = 0
 
-            if lerpLoop then
+            if lerpLoop ~= nil then
                 lerpLoop:Disconnect()
                 lerpLoop = nil
             end
