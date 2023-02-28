@@ -2571,7 +2571,7 @@ function library.Window(self, info, theme)
                     end
                 end
 
-                v.instances[1].Lerp({Position = position}, 0.1)
+                v.instances[1].Lerp(lerp_table, 0.1)
 
                 position_to_go = position_to_go + v.instances[1].Size.Y + self.interval
             end
