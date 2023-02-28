@@ -120,6 +120,13 @@ do
 		
         local lerpLoop
 
+        function lerp(v1, v2, ptc) -- // exists so it does work for Color3 n shit
+            if typeof(v1) == "number" then
+                return v1 + (v2 - v1) * ptc
+            end
+            return v1:Lerp(v2, ptc)
+        end
+
         rawset(fakeDraw, "Lerp", function(to, time)
             if not rawget(fakeDraw, "__OBJECT_EXIST") then return end
 
@@ -153,7 +160,7 @@ do
                 local ptc = (elapsed / time)
                 
                 for i, v in pairs(to) do
-                    fakeDraw[i] = from[i] + (v - from[i]) * ptc
+                    fakeDraw[i] = lerp(from[i], v, ptc)
                 end
                 
                 elapsed = math.clamp(elapsed + delta, 0, time)
