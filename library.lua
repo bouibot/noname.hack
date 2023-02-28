@@ -2560,12 +2560,14 @@ function library.Window(self, info, theme)
             for i, v in pairs(self.ntifs) do
                 local position = v2new(19, position_to_go)
 
+                local lerp_table = {Position = position}
+
                 if v.instances[1].Position.X < 0 then
-                    v.instances[1].Position = position + v2new(0, 7)
+                    v.instances[1].Position = position + v2new(-4, 7)
 
                     for i, v in pairs(v.instances) do
                         v.Transparency = 0
-                        v.Lerp({Transparency = 1}, 0.1)
+                        lerp_table.Transparency = 1
                     end
                 end
 
@@ -2575,7 +2577,7 @@ function library.Window(self, info, theme)
             end
 
         end
-
+		
         self.ntiflist = notiflist
     end
 
