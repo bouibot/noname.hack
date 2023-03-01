@@ -127,7 +127,7 @@ do
             return v1:Lerp(v2, ptc)
         end
 
-        rawset(fakeDraw, "Lerp", function(to, time)
+        rawset(fakeDraw, "Lerp", function(to, time, removeOld)
             if not rawget(fakeDraw, "__OBJECT_EXIST") then return end
 
             --utility.vozoid_tween.new(fakeDraw, TweenInfo.new(instanceTime, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut), instanceTo):Play()
@@ -140,7 +140,7 @@ do
             
             local elapsed = 0
 
-            if lerpLoop ~= nil then
+            if lerpLoop ~= nil and removeOld then
                 lerpLoop:Disconnect()
                 lerpLoop = nil
             end
@@ -2567,11 +2567,16 @@ function library.Window(self, info, theme)
 
                     for i, v in pairs(v.instances) do
                         v.Transparency = 0
-                        lerp_table.Transparency = 1
+                        
+                        if i == 1 then
+                            lerp_table.Transparency = 1
+                        else
+                            v.Lerp({Transparency = 1}, 0.1, false)
+                        end
                     end
                 end
 
-                v.instances[1].Lerp(lerp_table, 0.1)
+                v.instances[1].Lerp(lerp_table, 0.1, false)
 
                 position_to_go = position_to_go + v.instances[1].Size.Y + self.interval
             end
