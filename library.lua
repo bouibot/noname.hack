@@ -2159,7 +2159,8 @@ function library.Window(self, info, theme)
                     self:update()
                 end
 
-                for i, v in pairs(self.opinst) do
+                function list.update(self)
+                    for i, v in pairs(self.opinst) do
                         v.Visible = list_frame.Visible and i >= self.scroll[1] and i <= self.scroll[2]
                         if v.Visible then
                             v.Color = self.value == self.options[i] and window.theme.accent or c3rgb(255, 255, 255)
@@ -2193,6 +2194,7 @@ function library.Window(self, info, theme)
                     end)
 
                     self.lloop = loop
+                end
 
                 function list.Refresh(self, new_options)
                     self.options = new_options
