@@ -2159,8 +2159,7 @@ function library.Window(self, info, theme)
                     self:update()
                 end
 
-                function list.update(self)
-                    for i, v in pairs(self.opinst) do
+                for i, v in pairs(self.opinst) do
                         v.Visible = list_frame.Visible and i >= self.scroll[1] and i <= self.scroll[2]
                         if v.Visible then
                             v.Color = self.value == self.options[i] and window.theme.accent or c3rgb(255, 255, 255)
@@ -2169,10 +2168,31 @@ function library.Window(self, info, theme)
                     end
 
                     list_frame_scrollbar.Visible = list_frame.Visible and #self.options > 10 and true or false
-                    list_frame_scrollbar.Size = v2new(3, list_frame.Size.Y / 11)
+                    list_frame_scrollbar.Size = v2new(3, list_frame.Size.Y / (1 + #self.options - 10))
 
-                    list_frame_scrollbar.SetOffset(v2new(list_frame.Size.X-3, ((1/(#self.options-10)*(self.scroll[1]-1)))*(list_frame.Size.Y-list_frame_scrollbar.Size.Y)))
-                end
+                    if self.lloop then
+                        self.lloop:Disconnect()
+                        self.lloop = nil
+                    end
+
+                    local elapsed, from, to = 0, list_frame_scrollbar.GetOffset().Y, ((1/(#self.options-10)*(self.scroll[1]-1)))*(list_frame.Size.Y-list_frame_scrollbar.Size.Y)
+
+                    local loop; loop = utility:Connect(rs.Heartbeat, function(delta)
+                        if elapsed == 0.1 then
+
+                            list_frame_scrollbar.SetOffset(v2new(list_frame.Size.X-3, to))
+
+                            loop:Disconnect()
+                        end
+
+                        local ptc = (elapsed/0.1)^3
+
+                        list_frame_scrollbar.SetOffset(v2new(list_frame.Size.X-3, from + (to-from) * ptc))
+
+                        elapsed = math.clamp(elapsed + delta, 0, 0.1)
+                    end)
+
+                    self.lloop = loop
 
                 function list.Refresh(self, new_options)
                     self.options = new_options
