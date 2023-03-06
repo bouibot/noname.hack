@@ -2,7 +2,7 @@
 
 cool ui library to use
 
-splix copy (not 1:1)
+splix copy (10:1)
 
 # rules:
   1. da hoodians got no permission to use it (counts as pasting)
