@@ -2194,7 +2194,9 @@ function library.Window(self, info, theme)
                 })
 
                 function list.fix_string(self, value)
-                    return #value < 30 and value or value:sub(1, 27) .. "..."
+                    local max_symbols = math.floor(list_frame.Size.X/7)
+
+                    return #value < max_symbols and value or value:sub(1, max_symbols-3) .. "..."
                 end
 
                 function list.draw_options(self)
