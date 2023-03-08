@@ -2872,13 +2872,13 @@ function library.Window(self, info, theme)
         local tooltip = {instances = {}}
 
         local tt_frame = utility:Draw("Square", nil, {
-            Color = window.theme.dcont,
+            Color = self.theme.dcont,
             Group = "dcont",
             Size = v2new(0, 17)
         })
 
         local tt_frame_outline = utility:Draw("Square", v2new(-1, -1), {
-            Color = window.theme.outline,
+            Color = self.theme.outline,
             Group = "outline",
             Size = tt_frame.Size + v2new(2, 2),
             Filled = false,
@@ -2886,7 +2886,7 @@ function library.Window(self, info, theme)
         })
 
         local tt_accent = utility:Draw("Square", v2zero, {
-            Color = self.accent,
+            Color = self.theme.accent,
             Size = v2new(2, tt_frame.Size.Y),
             Group = "accent",
             Parent = tt_frame
