@@ -1708,11 +1708,13 @@ function library.Window(self, info, theme)
                 local def = info.def or min
                 local dec = info.dec or 1
                 local suf = info.suf or ""
+                local mintval = info.mintval or info.min_text_value
+                local maxtval = info.maxtval or info.max_text_value
                 local flag = info.flag or ""
                 local callback = info.callback or function() end
                 local pointer = info.pointer or tab.name .. section.name .. name
 
-                local slider = {name = name, flag = flag, pointer = pointer, value = def, min = min, max = max, suf = suf, dec = dec, holding = false, callback = callback}
+                local slider = {name = name, flag = flag, pointer = pointer, value = def, min = min, max = max, suf = suf, dec = dec, mintval = mintval, maxtval = maxtval, holding = false, callback = callback}
 
                 if pointer then
                     library.pointers[pointer] = slider
@@ -1737,7 +1739,7 @@ function library.Window(self, info, theme)
                 })
 
                 local slider_frame = utility:Draw("Square", v2new(0, 16), {
-                    Size = v2new(section_frame.Size.X - 12, 8),
+                    Size = v2new(section_frame.Size.X - 12, 10),
                     Color = window.theme.lcont,
                     Group = "lcont",
                     Parent = slider_title
@@ -1781,17 +1783,17 @@ function library.Window(self, info, theme)
                 end
                 
                 function slider.Update(self)
-                    slider_frame.Size = v2new(section_frame.Size.X - 12, 8)
+                    slider_frame.Size = v2new(section_frame.Size.X - 12, 10)
                     slider_outline.Size = slider_frame.Size + v2new(2, 2)
                     slider_gradient.Size = slider_frame.Size
                     slider_value.SetOffset(v2new(slider_frame.Size.X/2, -2))
                     slider_pm.SetOffset(v2new(section_frame.Size.X-33, 0))
 
-                    slider_value.Text = ("%s%s"):format(tostring(slider.value), tostring(slider.suf))
+                    slider_value.Text = self.mintval and self.value == self.min and self.mintval or self.maxtval and self.value == self.max and self.maxtval or ("%s%s"):format(tostring(self.value), tostring(slider.suf))
 
                     local percent = 1 - (self.max - self.value) / (self.max - self.min)
 
-                    slider_bar.Size = Vector2.new(percent * slider_frame.Size.X, slider_frame.Size.Y)
+                    slider_bar.Size = v2new(percent * slider_frame.Size.X, slider_frame.Size.Y)
 
                     if self.flag then
                         library.flags[self.flag] = self.value
@@ -1856,7 +1858,7 @@ function library.Window(self, info, theme)
 
                 self.instances = utility:Combine(self.instances, slider.instances)
 
-                self:UpdateScale(26)
+                self:UpdateScale(28)
 
                 table.insert(self.things.sliders, slider)
 
