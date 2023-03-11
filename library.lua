@@ -572,7 +572,7 @@ function library.Window(self, info, theme)
 
             -- // section
 
-            local section = {name = name, instances = {}, scale = 0, things = {buttons = {}, toggles = {}, textboxes = {}, dropdowns = {}, sliders = {}, colorpickers ={}, keybinds = {}, lists = {}}, rna = render_non_attached}
+            local section = {name = name, side = side, instances = {}, scale = 0, things = {buttons = {}, toggles = {}, textboxes = {}, dropdowns = {}, sliders = {}, colorpickers ={}, keybinds = {}, lists = {}}, rna = render_non_attached}
 
             local section_frame 
 
@@ -668,7 +668,7 @@ function library.Window(self, info, theme)
 
                 local tside = tab.sides[self.side == "left" and 1 or 2]
 
-                section_frame.Size = v2new(self.rna and 228 or tabs_frame.Size.X / 2 - 12, table.find(tside, self) == #tside and tabs_frame.Size.Y - 20 or self.scale > 0 and self.scale or 10)
+                section_frame.Size = v2new(self.rna and 228 or tabs_frame.Size.X / 2 - 12, table.find(tside, self) == #tside and tabs_frame.Size.Y - (section_frame.GetOffset().Y+5) or self.scale > 0 and self.scale or 10)
                 section_inline.Size = section_frame.Size + v2new(2, 2)
                 section_outline.Size = section_inline.Size + v2new(2, 2)
                 section_accent2.Size = v2new(section_frame.Size.X - (11 + (#name * 7)), 2)
