@@ -930,7 +930,7 @@ function library.Window(self, info, theme)
                 utility:Connect(uis.InputEnded, function(input)
                     if not keybind.binding and keybind.mode == "hold" then
                         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.MouseButton2 then
-                            if keybind.value == input.UserInputType then
+                            if keybind.value == input.UserInputType.Name then
                                 if table.find(window.kbds, keybind.pointer) then
                                     table.remove(window.kbds, table.find(window.kbds, keybind.pointer))
 
