@@ -665,7 +665,10 @@ function library.Window(self, info, theme)
             end
 
             function section.Update(self)
-                section_frame.Size = v2new(self.rna and 228 or tabs_frame.Size.X / 2 - 12, self.scale > 0 and self.scale or 10)
+
+                local tside = tab.sides[self.side == "left" and 1 or 2]
+
+                section_frame.Size = v2new(self.rna and 228 or tabs_frame.Size.X / 2 - 12, table.find(tside, self) == #tside and tabs_frame.Size.Y - 20 or self.scale > 0 and self.scale or 10)
                 section_inline.Size = section_frame.Size + v2new(2, 2)
                 section_outline.Size = section_inline.Size + v2new(2, 2)
                 section_accent2.Size = v2new(section_frame.Size.X - (11 + (#name * 7)), 2)
@@ -1724,6 +1727,15 @@ function library.Window(self, info, theme)
                     Parent = section_frame
                 })
 
+                local slider_pm = utility:Draw("Text", v2new(section_frame.Size.X-33, 0), {
+                    Color = c3rgb(255, 255, 255),
+                    Outline = true,
+                    Size = 13,
+                    Font = 2,
+                    Text = "+ -",
+                    Parent = slider_title
+                })
+
                 local slider_frame = utility:Draw("Square", v2new(0, 16), {
                     Size = v2new(section_frame.Size.X - 12, 8),
                     Color = window.theme.lcont,
@@ -1773,8 +1785,9 @@ function library.Window(self, info, theme)
                     slider_outline.Size = slider_frame.Size + v2new(2, 2)
                     slider_gradient.Size = slider_frame.Size
                     slider_value.SetOffset(v2new(slider_frame.Size.X/2, -2))
+                    slider_pm.SetOffset(v2new(section_frame.Size.X-33, 0))
 
-                    slider_value.Text = tostring(self.value) .. "/" .. tostring(self.max) .. self.suf
+                    slider_value.Text = ("%s%s"):format(tostring(slider.value), tostring(slider.suf))
 
                     local percent = 1 - (self.max - self.value) / (self.max - self.min)
 
@@ -1797,11 +1810,26 @@ function library.Window(self, info, theme)
 
                 utility:Connect(uis.InputBegan, function(input)
                     if input.UserInputType == Enum.UserInputType.MouseButton1 and main_frame.Visible and (tab.on or table.find(window.rna, section)) and not window:FakeRealMouseFuckingImAloneGoingToKillMyselfWithKnife(section) and utility:MouseOverPosition({section_frame.Position + v2new(0, slider_title.GetOffset().Y), section_frame.Position + v2new(section_frame.Size.X, slider_title.GetOffset().Y + 29)}) then
-                        slider.holding = true
-                        local percent = math.clamp(uis:GetMouseLocation().X - slider_bar.Position.X, 0, slider_frame.Size.X) / slider_frame.Size.X
-                        local value = math.floor((slider.min + (slider.max - slider.min) * percent) * slider.dec) / slider.dec
-                        value = math.clamp(value, slider.min, slider.max)
-                        slider:Set(value)
+                        if utility:MouseOverPosition({section_frame.Position + v2new(section_frame.Size.X-27, slider_title.GetOffset().Y), section_frame.Position + v2new(section_frame.Size.X, slider_title.GetOffset().Y+14)}) then
+                            local offset = uis:GetMouseLocation().X - slider_pm.Position.X
+                            if offset < 15 then
+                                local value_fix = (slider.value + (1 / slider.dec))
+
+                                if value_fix % (1 / slider.dec) ~= 0 then
+                                    value_fix = math.round(value_fix * (slider.dec * 10)) / (slider.dec * 10)
+                                end
+
+                                slider:Set(math.clamp(math.floor(value_fix * slider.dec) / slider.dec, slider.min, slider.max))
+                            elseif offset > 15 then
+                                slider:Set(math.clamp(math.floor((slider.value - (1 / slider.dec)) * slider.dec) / slider.dec, slider.min, slider.max))
+                            end
+                        else
+                            slider.holding = true
+                            local percent = math.clamp(uis:GetMouseLocation().X - slider_bar.Position.X, 0, slider_frame.Size.X) / slider_frame.Size.X
+                            local value = math.floor((slider.min + (slider.max - slider.min) * percent) * slider.dec) / slider.dec
+                            value = math.clamp(value, slider.min, slider.max)
+                            slider:Set(value)
+                        end
                     end
                 end)
 
@@ -1824,9 +1852,9 @@ function library.Window(self, info, theme)
                     end
                 end)
 
-                self.instances = utility:Combine(self.instances, {slider_title, slider_frame, slider_outline, slider_bar, slider_gradient, slider_value})
+                slider.instances = {slider_title, slider_frame, slider_outline, slider_bar, slider_gradient, slider_value, slider_pm}
 
-                slider.instances = {slider_title, slider_frame, slider_outline, slider_bar, slider_gradient, slider_value}
+                self.instances = utility:Combine(self.instances, slider.instances)
 
                 self:UpdateScale(26)
 
