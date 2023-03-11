@@ -9,10 +9,6 @@ local stats = game:GetService("Stats")
 
 local lplr = plrs.LocalPlayer
 
--- // some locals!!
-
-local load_start = tick()
-
 -- / vector 2
 
 local v2new = Vector2.new
@@ -1734,7 +1730,7 @@ function library.Window(self, info, theme)
                     Outline = true,
                     Size = 13,
                     Font = 2,
-                    Text = "+ -",
+                    Text = "- +",
                     Parent = slider_title
                 })
 
@@ -1815,6 +1811,8 @@ function library.Window(self, info, theme)
                         if utility:MouseOverPosition({section_frame.Position + v2new(section_frame.Size.X-27, slider_title.GetOffset().Y), section_frame.Position + v2new(section_frame.Size.X, slider_title.GetOffset().Y+14)}) then
                             local offset = uis:GetMouseLocation().X - slider_pm.Position.X
                             if offset < 15 then
+                                slider:Set(math.clamp(math.floor((slider.value - (1 / slider.dec)) * slider.dec) / slider.dec, slider.min, slider.max))
+                            elseif offset > 15 then
                                 local value_fix = (slider.value + (1 / slider.dec))
 
                                 if value_fix % (1 / slider.dec) ~= 0 then
@@ -1822,8 +1820,6 @@ function library.Window(self, info, theme)
                                 end
 
                                 slider:Set(math.clamp(math.floor(value_fix * slider.dec) / slider.dec, slider.min, slider.max))
-                            elseif offset > 15 then
-                                slider:Set(math.clamp(math.floor((slider.value - (1 / slider.dec)) * slider.dec) / slider.dec, slider.min, slider.max))
                             end
                         else
                             slider.holding = true
