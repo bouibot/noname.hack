@@ -2262,6 +2262,8 @@ function library.Window(self, info, theme)
 
                     end
 
+                    section.instances = utility:Combine(section.instances, {unpack(self.opinst)})
+
                     self:update()
                 end
 
@@ -2341,7 +2343,7 @@ function library.Window(self, info, theme)
 
                 list:draw_options()
 
-                self.instances = utility:Combine(self.instances, {list_title, list_frame, list_frame_outline, list_frame_scrollbar, unpack(list.opinst)})
+                self.instances = utility:Combine(self.instances, {list_title, list_frame, list_frame_outline, list_frame_scrollbar})
 
                 self:UpdateScale(153)
 
