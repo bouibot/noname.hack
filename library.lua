@@ -2425,6 +2425,8 @@ function library.Window(self, info, theme)
 
     function window.SelectTab(self, name)
 
+        if self.fading then return end
+
         for i, v in pairs(self.tabs) do
             if v.instances[3].Text == name then
                 v:Show()
@@ -2554,10 +2556,6 @@ function library.Window(self, info, theme)
             end)
 
             local from = tick()
-
-            while tick()-from < 0.2 and task.wait() do
-                self:SelectTab(self.sshit.name)
-            end
 
             uis.MouseIconEnabled = false
         end
