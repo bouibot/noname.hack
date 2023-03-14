@@ -3046,7 +3046,7 @@ function library.Window(self, info, theme)
 
             local slider_section = self.tabs[1]:Section({name = "Animation", rna = true})
             local anim_enabled = slider_section:Toggle({name = "Enabled", pointer = ""})
-            local anim_speed = slider_section:Slider({name = "Speed", min = 0.1, def = 1, max = 5, dec = 10, pointer = ""})
+            local anim_speed = slider_section:Slider({name = "Speed", min = 0.1, def = 1, max = 15, dec = 10, pointer = ""})
             local anim_min = slider_section:Slider({name = "Minimum value", min = 1, max = 2, pointer = ""})
             local anim_max = slider_section:Slider({name = "Maximum value", min = 1, max = 2, pointer = ""})
 
