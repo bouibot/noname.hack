@@ -2517,6 +2517,10 @@ function library.Window(self, info, theme)
             fade_instances = utility:Combine(fade_instances, v.instances)
         end
 
+        for i, v in pairs(self.rna) do
+            fade_instances = utility:Combine(fade_instances, v.instances)
+        end
+
         if self.sshit then
             for _, s in pairs(self.sshit.sections) do
                 fade_instances = utility:Combine(fade_instances, s.instances)
