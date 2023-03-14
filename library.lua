@@ -647,6 +647,10 @@ function library.Window(self, info, theme)
             function section.Show(self)
                 for i, v in pairs(self.instances) do
                     v.Visible = true
+
+                    if v.Transparency ~= v:getDefaultTransparency() and not window.fading then
+                        v.Transparency = v:getDefaultTransparency()
+                    end
                 end
             end
 
@@ -2497,18 +2501,22 @@ function library.Window(self, info, theme)
             v(not main_frame.Visible)
         end
 
-        local fade_instances = utility:Combine(window.sshit and window.sshit.instances or {}, utility:Combine(library.fade_instances, {
+        local fade_instances = utility:Combine(library.fade_instances, {
             main_frame, main_frame_accent, main_frame_title, main_frame_outline,
             pretab_frame, pretab_frame_inline, pretab_frame_outline,
             tabs_frame, tab_frame_accent, tabs_frame_outline
-        }))
+        })
 
         if self.cursor then
             fade_instances = utility:Combine(fade_instances, self.cursor.instances)
         end
 
-        if window.sshit then
-            for _, s in pairs(window.sshit.sections) do
+        for i, v in pairs(self.tabs) do
+            fade_instances = utility:Combine(fade_instances, v.instances)
+        end
+
+        if self.sshit then
+            for _, s in pairs(self.sshit.sections) do
                 fade_instances = utility:Combine(fade_instances, s.instances)
             end
         end
