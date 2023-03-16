@@ -53,6 +53,8 @@ do
         local fakeDraw = {}
         rawset(fakeDraw, "__OBJECT_EXIST", true)
 
+        local offsetEnabled = true
+
         local customProperties = {
             ["Parent"] = function(object)
                 table.insert(rawget(object, "children"), fakeDraw)
@@ -84,7 +86,7 @@ do
                         customProperties[key](value)
                     else
                         draw[key] = value
-                        if key == "Position" then
+                        if key == "Position" and offsetEnabled then
                             for _, v in pairs(rawget(fakeDraw, "children")) do
                                 v.Position = fakeDraw.Position + v.GetOffset()
                             end
@@ -95,6 +97,11 @@ do
         })
         rawset(fakeDraw, "getDefaultTransparency", function(self)
             return rawget(self, "__properties").Transparency or 1
+        end)
+        rawset(fakeDraw, "setOffsetValue", function(self)
+            offsetEnabled = true
+
+            self.SetOffset(self.GetOffset())
         end)
         rawset(fakeDraw, "Remove", function()
             if rawget(fakeDraw, "__OBJECT_EXIST") then
@@ -657,6 +664,8 @@ function library.Window(self, info, theme)
             function section.Hide(self)
                 for i, v in pairs(self.instances) do
                     v.Visible = false
+
+                    v:setOffsetValue(false)
                 end
             end
 
