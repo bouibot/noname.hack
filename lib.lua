@@ -320,7 +320,7 @@ do
     utility.short_keybind_names = {["MouseButton1"] = "MB1", ["MouseButton2"] = "MB2", ["MouseButton3"] = "MB3", ["Insert"] = "INS", ["LeftAlt"] = "LALT", ["LeftControl"] = "LC", ["LeftShift"] = "LS", ["RightAlt"] = "RALT", ["RightControl"] = "RC", ["RightShift"] = "RS", ["CapsLock"] = "CAPS", ["Return"] = "RET", ["Backspace"] = "BSP"}
 end
 
-function library.Window(self, info, theme)
+function library.New(self, info, theme)
 
     theme = theme or {
         accent = c3rgb(255, 0, 0),
