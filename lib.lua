@@ -39,8 +39,6 @@ local utility = {}
 
 do
 
-    utility.vozoid_tween = loadstring(game:HttpGet("https://raw.githubusercontent.com/vozoid/utility/main/Tween.lua"))()
-
     -- // utility:Draw is super pasted and skidded and shitcoded even i cant read it even tho i coded it
     -- // xyl pls dont ban me for this code 😭😢
 
