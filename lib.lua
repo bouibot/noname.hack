@@ -3277,4 +3277,4 @@ function library.New(self, info, theme)
     return window
 end
 
-return window, utility;
+return library, utility;
