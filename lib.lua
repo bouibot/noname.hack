@@ -44,6 +44,7 @@ do
     --utility.vozoid_tween = loadstring(game:HttpGet("https://raw.githubusercontent.com/vozoid/utility/main/Tween.lua"))() <<< unused
 
     -- // 24 december 2022: added groups to make my life easier
+    -- // 02 may 2024: font resizing reworked, fixed clipping on krampus
 
     function utility:Draw(class, offset, properties, t)
         t = t or false
@@ -294,7 +295,13 @@ do
     end
 
     function utility:GetPlexSize(text)
-        return #text * 6
+        local label = Drawing.new("Text");
+        label.Size = 13;
+        label.Text = text;
+        label.Font = Drawing.Fonts.Plex;
+        local bounds = label.TextBounds;
+        label:Remove();
+        return bounds.X;
     end
 
     function utility:CopyTable(tbl)
@@ -383,7 +390,7 @@ function library.New(self, info, theme)
     })
 
     local main_frame_title = utility:Draw("Text", v2new(3, 2), {
-        Font = 2,
+        Font = Drawing.Fonts.Plex,
         Size = 13,
         Outline = true,
         Color = Color3.new(1, 1, 1),
@@ -477,7 +484,7 @@ function library.New(self, info, theme)
         })
 
         local tab_frame_text = utility:Draw("Text", v2new(tab_frame.Size.X / 2, 2), {
-            Font = 2,
+            Font = Drawing.Fonts.Plex,
             Size = 13,
             Text = name,
             Color = Color3.new(1, 1, 1),
@@ -634,7 +641,7 @@ function library.New(self, info, theme)
             })
 
             local section_title = utility:Draw("Text", v2new(9, -7), {
-                Font = 2,
+                Font = Drawing.Fonts.Plex,
                 Size = 13,
                 Color = Color3.new(1, 1, 1),
                 --Outline = true,
@@ -643,7 +650,7 @@ function library.New(self, info, theme)
             })
 
             local section_title_bold = utility:Draw("Text", v2new(1, 0), {
-                Font = 2,
+                Font = Drawing.Fonts.Plex,
                 Size = 13,
                 Color = Color3.new(1, 1, 1),
                 Text = name,
@@ -764,7 +771,7 @@ function library.New(self, info, theme)
                 })
 
                 local keybind_title = utility:Draw("Text", offsets[2], {
-                    Font = 2,
+                    Font = Drawing.Fonts.Plex,
                     Size = 13,
                     Color = c3rgb(255, 255, 255),
                     Outline = true,
@@ -791,7 +798,7 @@ function library.New(self, info, theme)
                 })
 
                 local keybind_value = utility:Draw("Text", v2new(keybind_frame.Size.X / 2, -1), {
-                    Font = 2,
+                    Font = Drawing.Fonts.Plex,
                     Size = 13,
                     Color = c3rgb(255, 255, 255),
                     Outline = true,
@@ -867,6 +874,7 @@ function library.New(self, info, theme)
                         Color = window.theme.dcont,
                         Group = "dcont",
                         Size = v2new(48, 5 + 26),
+                        ZIndex = 10^4;
                         Parent = keybind_frame
                     })
 
@@ -875,6 +883,7 @@ function library.New(self, info, theme)
                         Group = "outline",
                         Size = mframe.Size + v2new(2, 2),
                         Filled = false,
+                        ZIndex = 10^4;
                         Parent = mframe
                     })
 
@@ -883,12 +892,13 @@ function library.New(self, info, theme)
                     for i, v in pairs({"Toggle", "Hold"}) do
 
                         modes[i] = utility:Draw("Text", v2new(3, 2 + 14 * (i-1)), {
-                            Font = 2,
+                            Font = Drawing.Fonts.Plex,
                             Size = 13,
                             Color = self.mode == v:lower() and window.theme.accent or c3rgb(255, 255, 255),
                             Group = "accent",
                             Outline = true,
                             Text = v,
+                            ZIndex = 10^4;
                             Parent = mframe
                         })
 
@@ -1031,7 +1041,7 @@ function library.New(self, info, theme)
                 })
 
                 local cptitle = utility:Draw("Text", offsets[2], {
-                    Font = 2,
+                    Font = Drawing.Fonts.Plex,
                     Size = 13,
                     Color = c3rgb(255, 255, 255),
                     Outline = true,
@@ -1098,6 +1108,7 @@ function library.New(self, info, theme)
                         Color = window.theme.dcont,
                         Group = "dcont",
                         Size = v2new(self.trans and 152 or 137, 120),
+                        ZIndex = 10^4;
                         Parent = cpframe
                     })
 
@@ -1106,6 +1117,7 @@ function library.New(self, info, theme)
                         Group = "outline",
                         Size = cpdropframe.Size + v2new(2, 2),
                         Filled = false,
+                        ZIndex = 10^4;
                         Parent = cpdropframe
                     })
 
@@ -1113,12 +1125,14 @@ function library.New(self, info, theme)
                         Color = window.theme.accent,
                         Group = "accent",
                         Size = v2new(cpdropframe.Size.X, 1),
+                        ZIndex = 10^4;
                         Parent = cpdropframe
                     })
 
                     local cpdropframe_color = utility:Draw("Square", v2new(10, 10), {
                         Color = c3hsv(self.dvalues[1], 1, 1),
                         Size = v2new(100, 100),
+                        ZIndex = 10^4;
                         Parent = cpdropframe
                     })
 
@@ -1127,17 +1141,20 @@ function library.New(self, info, theme)
                         Group = "outline",
                         Size = cpdropframe_color.Size + v2new(2, 2),
                         Filled = false,
+                        ZIndex = 10^4;
                         Parent = cpdropframe_color
                     })
 
                     local cpdropframe_color_image = utility:Draw("Image", v2zero, {
                         Size = cpdropframe_color.Size,
+                        ZIndex = 10^4;
                         Parent = cpdropframe_color
                     })
 
                     local cpdropframe_color_cursor = utility:Draw("Square", v2new(math.clamp(self.dvalues[2]*100, 0, 97), math.clamp((1-self.dvalues[3])*100, 0, 97)), {
                         Color = c3rgb(255, 255, 255),
                         Size = v2new(3, 3),
+                        ZIndex = 10^4;
                         Parent = cpdropframe_color
                     })
 
@@ -1146,6 +1163,7 @@ function library.New(self, info, theme)
                         Group = "outline",
                         Size = cpdropframe_color_cursor.Size + v2new(2, 2),
                         Filled = false,
+                        ZIndex = 10^4;
                         Parent = cpdropframe_color_cursor
                     })
 
@@ -1154,17 +1172,20 @@ function library.New(self, info, theme)
                         Group = "outline",
                         Size = v2new(7, 100),
                         Filled = false,
+                        ZIndex = 10^4;
                         Parent = cpdropframe
                     })
 
                     local cpdropframe_hue_image = utility:Draw("Image", v2new(1, 1), {
                         Size = cpdropframe_hue.Size - v2new(2, 2),
+                        ZIndex = 10^4;
                         Parent = cpdropframe_hue
                     })
 
                     local cpdropframe_hue_picker = utility:Draw("Square", v2new(0, math.clamp(math.floor(self.dvalues[1]*100), 0, 99)), {
                         Color = c3rgb(255, 255, 255),
                         Size = v2new(7, 1),
+                        ZIndex = 10^4;
                         Parent = cpdropframe_hue
                     })
 
@@ -1173,6 +1194,7 @@ function library.New(self, info, theme)
                         Group = "outline",
                         Size = cpdropframe_hue_picker.Size + v2new(2, 2),
                         Filled = false,
+                        ZIndex = 10^4;
                         Parent = cpdropframe_hue_picker
                     })
 
@@ -1181,17 +1203,20 @@ function library.New(self, info, theme)
                         Group = "outline",
                         Size = v2new(7, 100),
                         Filled = false,
+                        ZIndex = 10^4;
                         Parent = cpdropframe
                     })
 
                     local cpdropframe_trans_image = utility:Draw("Image", v2new(1, 1), {
                         Size = cpdropframe_trans.Size - v2new(2, 2),
+                        ZIndex = 10^4;
                         Parent = cpdropframe_trans
                     })
 
                     local cpdropframe_trans_picker = utility:Draw("Square", v2new(0, math.clamp(math.floor(self.dvalues[4]*100), 0, 99)), {
                         Color = c3rgb(255, 255, 255),
                         Size = v2new(7, 1),
+                        ZIndex = 10^4;
                         Parent = cpdropframe_trans
                     })
 
@@ -1200,6 +1225,7 @@ function library.New(self, info, theme)
                         Group = "outline",
                         Size = cpdropframe_trans_picker.Size + v2new(2, 2),
                         Filled = false,
+                        ZIndex = 10^4;
                         Parent = cpdropframe_trans_picker
                     })
 
@@ -1448,7 +1474,7 @@ function library.New(self, info, theme)
                 })
 
                 local button_title = utility:Draw("Text", v2new(button_frame.Size.X / 2, 2), {
-                    Font = 2,
+                    Font = Drawing.Fonts.Plex,
                     Size = 13,
                     Color = Color3.new(1, 1, 1),
                     Outline = true,
@@ -1515,7 +1541,7 @@ function library.New(self, info, theme)
                 })
 
                 local textbox_title = utility:Draw("Text", v2new(4, 2), {
-                    Font = 2,
+                    Font = Drawing.Fonts.Plex,
                     Size = 13,
                     Color = c3rgb(255, 255, 255),
                     Outline = true,
@@ -1645,7 +1671,7 @@ function library.New(self, info, theme)
                 })
 
                 local toggle_title = utility:Draw("Text", v2new(13, -3), {
-                    Font = 2,
+                    Font = Drawing.Fonts.Plex,
                     Size = 13,
                     Color = Color3.new(1, 1, 1),
                     Outline = true,
@@ -1747,7 +1773,7 @@ function library.New(self, info, theme)
                     Color = c3rgb(255, 255, 255),
                     Outline = true,
                     Size = 13,
-                    Font = 2,
+                    Font = Drawing.Fonts.Plex,
                     Text = name,
                     Parent = section_frame
                 })
@@ -1756,7 +1782,7 @@ function library.New(self, info, theme)
                     Color = c3rgb(255, 255, 255),
                     Outline = true,
                     Size = 13,
-                    Font = 2,
+                    Font = Drawing.Fonts.Plex,
                     Text = "- +",
                     Parent = slider_title
                 })
@@ -1793,7 +1819,7 @@ function library.New(self, info, theme)
                     Color = c3rgb(255, 255, 255),
                     Outline = true,
                     Size = 13,
-                    Font = 2,
+                    Font = Drawing.Fonts.Plex,
                     Text = tostring(def) .. "/" .. tostring(max) .. suf,
                     Center = true,
                     Parent = slider_frame
@@ -1913,7 +1939,7 @@ function library.New(self, info, theme)
                     Color = c3rgb(255, 255, 255),
                     Outline = true,
                     Size = 13,
-                    Font = 2,
+                    Font = Drawing.Fonts.Plex,
                     Text = name,
                     Parent = section_frame
                 })
@@ -1943,7 +1969,7 @@ function library.New(self, info, theme)
                     Color = c3rgb(255, 255, 255),
                     Outline = true,
                     Size = 13,
-                    Font = 2,
+                    Font = Drawing.Fonts.Plex,
                     Text = "shit vaLue",
                     Parent = dropdown_frame
                 })
@@ -1973,6 +1999,7 @@ function library.New(self, info, theme)
                         Size = v2new(dropdown_frame.Size.X, 2+16*#self.options),
                         Color = window.theme.dcont,
                         Group = "dcont",
+                        ZIndex = 10^4;
                         Parent = dropdown_frame
                     })
 
@@ -1985,6 +2012,7 @@ function library.New(self, info, theme)
                         Color = window.theme.outline,
                         Group = "outline",
                         Filled = false,
+                        ZIndex = 10^4;
                         Parent = list_frame
                     })
 
@@ -1992,6 +2020,7 @@ function library.New(self, info, theme)
                         Size = v2new(3, list_frame.Size.Y/(#self.options - self.visOptions + 1)),
                         Color = window.theme.accent,
                         Group = "accent",
+                        ZIndex = 10^4+1;
                         Parent = list_frame
                     })
 
@@ -2006,9 +2035,10 @@ function library.New(self, info, theme)
                             Color = (multi and table.find(self.value, v) or not multi and self.value == v) and window.theme.accent or c3rgb(255, 255, 255),
                             Outline = true,
                             Size = 13,
-                            Font = 2,
+                            Font = Drawing.Fonts.Plex,
                             Text = tostring(v),
-                            Parent = list_frame
+                            Parent = list_frame,
+                            ZIndex = 10^4;
                         })
 
                         if self.scrollable then
@@ -2219,7 +2249,7 @@ function library.New(self, info, theme)
                     Color = c3rgb(255, 255, 255),
                     Outline = true,
                     Size = 13,
-                    Font = 2,
+                    Font = Drawing.Fonts.Plex,
                     Text = name,
                     Parent = section_frame
                 })
@@ -2267,7 +2297,7 @@ function library.New(self, info, theme)
                             Color = self.value == text and window.theme.accent or c3rgb(255, 255, 255),
                             Outline = true,
                             Size = 13,
-                            Font = 2,
+                            Font = Drawing.Fonts.Plex,
                             Text = self:fix_string(text),
                             Visible = i >= self.scroll[1] and i <= self.scroll[2],
                             Parent = list_frame
@@ -2640,7 +2670,7 @@ function library.New(self, info, theme)
                 Color = c3rgb(255, 255, 255),
                 Outline = true,
                 Size = 13,
-                Font = 2,
+                Font = Drawing.Fonts.Plex,
                 Text = ntif.text,
                 Parent = ntif_frame
             }, true)
@@ -2670,7 +2700,7 @@ function library.New(self, info, theme)
                         Color = v[2],
                         Outline = true,
                         Size = 13,
-                        Font = 2,
+                        Font = Drawing.Fonts.Plex,
                         Text = ntif.text:sub(s, e),
                         Parent = ntif_text
                     }, true)
@@ -2795,7 +2825,7 @@ function library.New(self, info, theme)
             Color = c3rgb(255, 255, 255),
             Outline = true,
             Size = 13,
-            Font = 2,
+            Font = Drawing.Fonts.Plex,
             Text = "keybinds",
             Parent = kblist_frame
         }, true)
@@ -2804,7 +2834,7 @@ function library.New(self, info, theme)
             Color = c3rgb(255, 255, 255),
             Outline = true,
             Size = 13,
-            Font = 2,
+            Font = Drawing.Fonts.Plex,
             Text = "",
             Parent = kblist_frame
         }, true)
@@ -2894,7 +2924,7 @@ function library.New(self, info, theme)
             Color = c3rgb(255, 255, 255),
             Outline = true,
             Size = 13,
-            Font = 2,
+            Font = Drawing.Fonts.Plex,
             Text = watermark.text,
             Parent = watermark_frame
         }, true)
@@ -2946,7 +2976,8 @@ function library.New(self, info, theme)
         local tt_frame = utility:Draw("Square", nil, {
             Color = self.theme.dcont,
             Group = "dcont",
-            Size = v2new(0, 17)
+            Size = v2new(0, 17),
+            ZIndex = 100
         })
 
         local tt_frame_outline = utility:Draw("Square", v2new(-1, -1), {
@@ -2954,6 +2985,7 @@ function library.New(self, info, theme)
             Group = "outline",
             Size = tt_frame.Size + v2new(2, 2),
             Filled = false,
+            ZIndex = 99,
             Parent = tt_frame
         })
 
@@ -2961,6 +2993,7 @@ function library.New(self, info, theme)
             Color = self.theme.accent,
             Size = v2new(2, tt_frame.Size.Y),
             Group = "accent",
+            ZIndex = 101,
             Parent = tt_frame
         })
 
@@ -2968,8 +3001,9 @@ function library.New(self, info, theme)
             Color = c3rgb(255, 255, 255),
             Outline = true,
             Size = 13,
-            Font = 2,
+            Font = Drawing.Fonts.Plex,
             Text = "",
+            ZIndex = 102,
             Parent = tt_frame
         })
 
@@ -2978,6 +3012,7 @@ function library.New(self, info, theme)
         function tooltip.SetText(self, text)
             for i, v in pairs(self.instances) do
                 v.Visible = true
+                v.Transparency = 1;
             end
 
             tt_text.Text = text
@@ -3018,7 +3053,7 @@ function library.New(self, info, theme)
             Group = "accent",
             Filled = true,
             Thickness = 0,
-            ZIndex = 65
+            ZIndex = 10^7;
         })
 
         local triangle_outline = utility:Draw("Triangle", v2zero, {
@@ -3026,7 +3061,7 @@ function library.New(self, info, theme)
             Group = "outline",
             Filled = false,
             Thickness = 1,
-            ZIndex = 66
+            ZIndex = 10^7;
         })
 
         function cursor.Update(self)
@@ -3061,6 +3096,12 @@ function library.New(self, info, theme)
         for _, tab in pairs(self.tabs) do
             tab:Update()
         end
+
+        for i, v in next, library.drawings[1] do
+
+            v.ZIndex = i;
+
+        end;
 
         if #self.tabs > 0 then
             self.saved_settings = {}
@@ -3236,4 +3277,4 @@ function library.New(self, info, theme)
     return window
 end
 
-return library, utility;
+return window, utility;
